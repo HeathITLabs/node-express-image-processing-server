@@ -4,7 +4,7 @@ const multer  = require('multer')
 
 const router = Router();
 
-function filename (request, file, callback) {
+function filename (req, file, callback) {
     callback(null, file.originalname);
 }
 
@@ -13,13 +13,14 @@ const storage = multer.diskStorage({
     'filename': filename   
  });
 
-const fileFilter = (req, file, callback) => {}
- if(file.mimetype !== 'image/png') 
- {
-    req.fileValidationError ='Wrong file type'
-    callback(null,false, new Error('Wrong file type'));
- }
- else(callback(null, true));
+const fileFilter = (req, file, callback) => {
+    if(file.mimetype !== 'image/png') 
+    {
+        req.fileValidationError ='Wrong file type'
+        callback(null,false, new Error('Wrong file type'));
+    }
+    else(callback(null, true));
+}
 
 const upload = multer({
     fileFilter: fileFilter,
@@ -30,7 +31,7 @@ router.post('/upload', upload.single('photo'), (req, res) => {
     if(req.fileValidationError) {
         res.status(400).json({error: req.fileValidationError})
     } else {
-        res.status(201).json({success: true})
+        res.status(201).json({'success': true})
     }
 })
 
